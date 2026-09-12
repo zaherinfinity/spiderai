@@ -1,0 +1,11 @@
+__pycache__
+*.pyc
+.venv
+venv
+static/uploads/**
+*.mp4
+*.wav
+*.mp3
+requirements-full.txt
+.git
+.env
