@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1.25rem">
+  <h1 class="page-title" style="margin:0">Notifications</h1>
+  {% if notifications %}
+  <form method="post" action="{{ url_for('notifications_read_all') }}">
+    <button type="submit" class="btn btn-sm btn-ghost">Mark all read</button>
+  </form>
+  {% endif %}
+</div>
+<p style="color:var(--muted);margin-bottom:1.5rem">
+  Updates, alerts, and breaking news from admin.
+</p>
+
+{% if notifications %}
+<div class="notif-list">
+  {% for n in notifications %}
+  <article class="card notif-item notif-{{ n.type }} {% if not n.is_read %}notif-unread{% endif %}">
+    <div class="notif-head">
+      <span class="badge
+        {% if n.type=='breaking' %}badge-danger
+        {% elif n.type=='alert' %}badge-warn
+        {% elif n.type=='update' %}badge-info
+        {% else %}badge-success{% endif %}">{{ n.type }}</span>
+      <time style="color:var(--muted);font-size:0.8rem">{{ (n.created_at or "")[:16] }}</time>
+    </div>
+    <h3 class="notif-title">{{ n.title }}</h3>
+    <p class="notif-body">{{ n.body }}</p>
+    {% if not n.is_read %}
+    <form method="post" action="{{ url_for('notification_read', notif_id=n.id) }}" style="margin-top:0.75rem">
+      <button type="submit" class="btn btn-sm btn-ghost">Mark as read</button>
+    </form>
+    {% endif %}
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card" style="text-align:center;padding:2.5rem">
+  <p style="color:var(--muted)">No notifications yet.</p>
+</div>
+{% endif %}
+{% endblock %}

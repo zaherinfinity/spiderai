@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Maintenance{% endblock %}
+{% block content %}
+<div class="form-card card" style="text-align:center">
+  <h1 class="page-title">Under maintenance</h1>
+  <p style="color:var(--muted);margin-bottom:1.25rem">
+    The site is temporarily unavailable. Please check back soon.
+  </p>
+  <a href="{{ url_for('login') }}" class="btn btn-ghost">Staff login</a>
+</div>
+{% endblock %}
