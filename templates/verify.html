@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#05060c" />
+  <title>Security check · {{ site_name|default('AI Translate Video') }}</title>
+  <link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='img/logo.jpg') }}" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #05060c;
+      --card: rgba(14, 18, 38, 0.94);
+      --border: rgba(130, 150, 255, 0.16);
+      --text: #f0f2ff;
+      --muted: #8b93b0;
+      --accent: #2dd4bf;
+      --primary: #6366f1;
+      --danger: #fb7185;
+      --radius: 20px;
+      --safe-b: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      min-height: 100dvh;
+      color: var(--text);
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 90% 55% at 50% -15%, rgba(99, 102, 241, 0.28), transparent 55%),
+        radial-gradient(ellipse 50% 40% at 100% 100%, rgba(45, 212, 191, 0.1), transparent),
+        radial-gradient(ellipse 40% 30% at 0% 80%, rgba(167, 139, 250, 0.08), transparent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem 1rem calc(1.25rem + var(--safe-b));
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap {
+      width: 100%;
+      max-width: 440px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem 1.5rem 1.75rem;
+      box-shadow: 0 28px 64px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 0 auto 1rem;
+      display: block;
+      box-shadow: 0 0 36px rgba(99, 102, 241, 0.4);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.7rem;
+      font-weight: 650;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(45, 212, 191, 0.1);
+      border: 1px solid rgba(45, 212, 191, 0.28);
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+    h1 {
+      font-size: clamp(1.2rem, 4vw, 1.4rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      line-height: 1.25;
+    }
+    .sub {
+      color: var(--muted);
+      font-size: clamp(0.88rem, 2.5vw, 0.95rem);
+      line-height: 1.55;
+      margin-bottom: 1.5rem;
+      max-width: 320px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .turnstile-box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 70px;
+      margin: 0.25rem 0 1rem;
+    }
+    .status {
+      font-size: 0.85rem;
+      color: var(--muted);
+      min-height: 1.4em;
+      transition: color 0.2s;
+    }
+    .status.ok { color: var(--accent); }
+    .status.err { color: var(--danger); }
+    .spinner {
+      display: none;
+      width: 22px;
+      height: 22px;
+      border: 2px solid rgba(255,255,255,0.15);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      margin: 0.75rem auto 0;
+      animation: spin 0.7s linear infinite;
+    }
+    .spinner.show { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .flash {
+      padding: 0.7rem 0.95rem;
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+    .flash-error {
+      background: rgba(251, 113, 133, 0.12);
+      border: 1px solid rgba(251, 113, 133, 0.28);
+      color: #fecdd3;
+    }
+    .flash-info {
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.28);
+      color: #c7d2fe;
+    }
+    .flash-success {
+      background: rgba(45, 212, 191, 0.12);
+      border: 1px solid rgba(45, 212, 191, 0.28);
+      color: #99f6e4;
+    }
+    .foot {
+      margin-top: 1.25rem;
+      font-size: 0.75rem;
+      color: #5c6480;
+    }
+    /* Phone */
+    @media (max-width: 480px) {
+      body { padding: 1rem 0.85rem calc(1rem + var(--safe-b)); align-items: flex-start; padding-top: max(12vh, 2rem); }
+      .card { padding: 1.65rem 1.15rem 1.4rem; border-radius: 18px; }
+      .logo { width: 64px; height: 64px; }
+    }
+    /* Desktop */
+    @media (min-width: 768px) {
+      .card { padding: 2.35rem 2rem 2rem; }
+      .logo { width: 80px; height: 80px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .spinner { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for cat, msg in messages %}
+          <div class="flash flash-{{ cat }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="card">
+      <div class="badge">Protected by Cloudflare</div>
+      <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="" class="logo" width="80" height="80" />
+      <h1>Verify you are human</h1>
+      <p class="sub">
+        Complete the check below. After success you will go to the home page automatically.
+      </p>
+
+      <form method="post" id="verifyForm" action="{{ url_for('verify_human') }}">
+        <input type="hidden" name="next" value="{{ next or '/' }}" />
+
+        {% if turnstile_enabled %}
+        <div class="turnstile-box">
+          <div
+            class="cf-turnstile"
+            data-sitekey="{{ turnstile_site_key }}"
+            data-theme="dark"
+            data-size="normal"
+            data-callback="onTurnstileSuccess"
+            data-expired-callback="onTurnstileExpired"
+            data-error-callback="onTurnstileError"
+          ></div>
+        </div>
+        <p class="status" id="statusText">Waiting for verification…</p>
+        <div class="spinner" id="spinner" aria-hidden="true"></div>
+        {% else %}
+        <div class="flash flash-info" style="margin-bottom:1rem">
+          Add <code>TURNSTILE_SITE_KEY</code> and <code>TURNSTILE_SECRET_KEY</code> in <code>.env</code>, then restart the server.
+        </div>
+        <noscript><button type="submit">Continue</button></noscript>
+        <script>
+          // Dev fallback without keys: auto-submit after short delay is intentional only when turnstile disabled
+          document.getElementById("verifyForm").submit();
+        </script>
+        {% endif %}
+      </form>
+
+      <p class="foot">{{ site_name|default('AI Translate Video') }} · Secure access</p>
+    </div>
+  </div>
+
+  {% if turnstile_enabled %}
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <script>
+    (function () {
+      var form = document.getElementById("verifyForm");
+      var status = document.getElementById("statusText");
+      var spinner = document.getElementById("spinner");
+      var submitted = false;
+
+      function go() {
+        if (submitted || !form) return;
+        submitted = true;
+        if (status) {
+          status.textContent = "Verified. Opening home…";
+          status.className = "status ok";
+        }
+        if (spinner) spinner.classList.add("show");
+        // small delay so user sees success state
+        setTimeout(function () { form.submit(); }, 350);
+      }
+
+      window.onTurnstileSuccess = function () { go(); };
+      window.onTurnstileExpired = function () {
+        submitted = false;
+        if (status) {
+          status.textContent = "Check expired. Please try again.";
+          status.className = "status err";
+        }
+        if (spinner) spinner.classList.remove("show");
+        if (window.turnstile) {
+          try { turnstile.reset(); } catch (e) {}
+        }
+      };
+      window.onTurnstileError = function () {
+        submitted = false;
+        if (status) {
+          status.textContent = "Verification error. Please refresh.";
+          status.className = "status err";
+        }
+        if (spinner) spinner.classList.remove("show");
+      };
+    })();
+  </script>
+  {% endif %}
+</body>
+</html>
